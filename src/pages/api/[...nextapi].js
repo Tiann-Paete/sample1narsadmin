@@ -474,18 +474,18 @@ async function handleGetTotalProducts(req, res) {
 async function handleGetProductAnalytics(req, res) {
   try {
     const [products] = await db.query(`
-      SELECT 
-        p.*,
-        COALESCE(ps.quantity, 0) as current_stock,
-        COALESCE(AVG(pr.rating), 0) as avg_rating,
-        COUNT(DISTINCT o.id) as order_count
-      FROM products p
-      LEFT JOIN product_stocks ps ON p.id = ps.product_id
-      LEFT JOIN product_ratings pr ON p.id = pr.product_id
-      LEFT JOIN ordered_products op ON p.id = op.product_id
-      LEFT JOIN orders o ON op.order_id = o.id
-      WHERE p.deleted = FALSE
-      GROUP BY p.id
+     SELECT 
+  p.*,
+  COALESCE(ps.quantity, 0) as current_stock,
+  COALESCE(AVG(pr.rating), 0) as avg_rating,
+  COUNT(DISTINCT o.id) as order_count
+FROM products p
+LEFT JOIN product_stocks ps ON p.id = ps.product_id
+LEFT JOIN product_ratings pr ON p.id = pr.product_id
+LEFT JOIN ordered_products op ON p.id = op.product_id
+LEFT JOIN orders o ON op.order_id = o.id
+WHERE p.deleted = FALSE
+GROUP BY p.id, ps.quantity
     `);
 
     const analyzedProducts = products.map(product => ({
